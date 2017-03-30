@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block content %}
+<body>
+<div align="center">
+
+  {% for data in datas %}
+  <table class="bordered">
+    <caption align="left">{{ data.table }}</caption>
+    <tr>
+      <td>SQL: {{ data.sql }}</td>
+      <td>总行数：{{ data.amount }}, 总dbid：{{ data.total_dbid }}</td>
+    </tr>
+    <tr>
+      <td>
+        <div id="quantityChart_{{ data.table }}" style="height:400px; width: 700px"></div>
+      </td>
+      <td>
+        <div id="countChart_{{ data.table }}" style="height:400px; width: 700px"></div>
+      </td>
+    </tr>
+  </table>
+  <br>
+  {% endfor %}
+
+</div>
+
+<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+
+<script type="text/javascript">
+  require.config({
+    paths: {
+      echarts: 'http://echarts.baidu.com/build/dist'
+    }
+  });
+
+  require(
+      [
+        'echarts',
+        'echarts/theme/macarons',
+        'echarts/chart/bar',
+        'echarts/chart/line',
+        'echarts/chart/scatter'
+      ],
+      function (ec, theme) {
+        {% for data in datas %}
+          var quantityChart_{{ data.table }} = ec.init(document.getElementById('quantityChart_{{ data.table }}'), theme);
+
+          var quantityChart_{{ data.table }}_Option = {
+              title: {
+                text: '{{ data.table }}量级占比',
+                subtext: ''
+              },
+              tooltip: {
+                trigger: 'axis'
+              },
+              legend: {
+                data: ['占比%']
+              },
+              toolbox: {
+                show: true,
+                feature: {
+                  mark: {show: false},
+                  dataView: {show: false, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: false},
+                  saveAsImage: {show: true}
+                }
+              },
+              calculable: true,
+              xAxis: [
+                {
+                  type: 'category',
+                  data: ['<1k', '1k~5k', '5k~1w', '1w~5w', '5w~10w', '10w~50w', '50w~100w', '100w~500w', '500w~1000w', '>1000w']
+                }
+              ],
+              yAxis: [
+                {
+                  type: 'value',
+                  axisLabel: {
+                    formatter: '{value} %'
+                  }
+                }
+              ],
+              series: [
+                {
+                  name: '占比',
+                  type: 'bar',
+                  data: [{{ data.range_percentile['r1p'] }},
+                    {{ data.range_percentile['r2p'] }},
+                    {{ data.range_percentile['r3p'] }},
+                    {{ data.range_percentile['r4p'] }},
+                    {{ data.range_percentile['r5p'] }},
+                    {{ data.range_percentile['r6p'] }},
+                    {{ data.range_percentile['r7p'] }},
+                    {{ data.range_percentile['r8p'] }},
+                    {{ data.range_percentile['r9p'] }},
+                    {{ data.range_percentile['r10p'] }},
+                    {{ data.range_percentile['r11p'] }}],
+                  markPoint: {
+                    data: [
+                      {type: 'max', name: '最大值'},
+                      {type: 'min', name: '最小值'}
+                    ]
+                  },
+                  markLine: {
+                    data: [
+                      {type: 'average', name: '平均值'}
+                    ]
+                  }
+                }
+              ]
+            };
+            quantityChart_{{ data.table }}.setOption(quantityChart_{{ data.table }}_Option);
+
+            var countChart_{{ data.table }} = ec.init(document.getElementById('countChart_{{ data.table }}'), theme);
+
+            var countChart_{{ data.table }}_Option = {
+              title: {
+                text: '{{ data.table }}量级',
+                subtext: ''
+              },
+              tooltip: {
+                trigger: 'axis'
+              },
+              legend: {
+                data: ['数量']
+              },
+              toolbox: {
+                show: true,
+                feature: {
+                  mark: {show: false},
+                  dataView: {show: false, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: false},
+                  saveAsImage: {show: true}
+                }
+              },
+              calculable: true,
+              xAxis: [
+                {
+                  type: 'category',
+                  data: ['<1k', '1k~5k', '5k~1w', '1w~5w', '5w~10w', '10w~50w', '50w~100w', '100w~500w', '500w~1000w', '>1000w']
+                }
+              ],
+              yAxis: [
+                {
+                  type: 'value',
+                  axisLabel: {
+                    formatter: '{value}'
+                  }
+                }
+              ],
+              series: [
+                {
+                  name: '数量',
+                  type: 'bar',
+                  data: [{{ data.range_count['r1'] }},
+                    {{ data.range_count['r2'] }},
+                    {{ data.range_count['r3'] }},
+                    {{ data.range_count['r4'] }},
+                    {{ data.range_count['r5'] }},
+                    {{ data.range_count['r6'] }},
+                    {{ data.range_count['r7'] }},
+                    {{ data.range_count['r8'] }},
+                    {{ data.range_count['r9'] }},
+                    {{ data.range_count['r10'] }},
+                    {{ data.range_count['r11'] }}],
+                  markPoint: {
+                    data: [
+                      {type: 'max', name: '最大值'},
+                      {type: 'min', name: '最小值'}
+                    ]
+                  },
+                  markLine: {
+                    data: [
+                      {type: 'average', name: '平均值'}
+                    ]
+                  }
+                }
+              ]
+            };
+            countChart_{{ data.table }}.setOption(countChart_{{ data.table }}_Option);
+
+        {% endfor %}
+      }
+  );
+</script>
+
+
+</body>
+{% endblock %}
