@@ -19,7 +19,7 @@ set you target table and sql
 you can change the user_id to adapter you key and add some where condition into the sql, but you should only get the count num in first column
 ```config.ini
 [tables]
-tables=yourtablename,secondtalbe # splide with ","
+tables=yourtablename,secondtable # splide with ","
 sql=SELECT COUNT(user_id) FROM %s.%s GROUP BY user_id
 ```
 
