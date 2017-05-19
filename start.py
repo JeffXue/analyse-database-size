@@ -32,10 +32,12 @@ def analyse_db():
         count = []
         for item in results:
             count.append(int(item[0]))
-        range_count = {'r1': 0, 'r2': 0, 'r3': 0, 'r4': 0, 'r5': 0, 'r6': 0, 'r7': 0, 'r8': 0, 'r9': 0, 'r10': 0}
+        range_count = {'r0': 0, 'r1': 0, 'r2': 0, 'r3': 0, 'r4': 0, 'r5': 0, 'r6': 0, 'r7': 0, 'r8': 0, 'r9': 0, 'r10': 0}
         for item in count:
             amount += item
-            if item <= 1000:
+            if item <= 500:
+                range_count['r0'] += 1
+            elif 500 < item <= 1000:
                 range_count['r1'] += 1
             elif 1000 < item <= 5000:
                 range_count['r2'] += 1
@@ -56,8 +58,10 @@ def analyse_db():
             else:
                 range_count['r10'] += 1
 
-        range_percentile = {'r1p': 0, 'r2p': 0, 'r3p': 0, 'r4p': 0, 'r5p': 0, 'r6p': 0,
+        range_percentile = {'r0p': 0, 'r1p': 0, 'r2p': 0, 'r3p': 0, 'r4p': 0, 'r5p': 0, 'r6p': 0,
                             'r7p': 0, 'r8p': 0, 'r9p': 0, 'r10p': 0, 'r11p': 0}
+        if range_count['r0']:
+            range_percentile['r0p'] = '%0.3f' % float(range_count['r0']*100/total_dbid)
         if range_count['r1']:
             range_percentile['r1p'] = '%0.3f' % float(range_count['r1']*100/total_dbid)
         if range_count['r2']:
